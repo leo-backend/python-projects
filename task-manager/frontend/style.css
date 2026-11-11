@@ -1,0 +1,296 @@
+/* ==============================
+   GENERAL SETTINGS
+============================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f8f5fc;
+    color: #49445a;
+    min-height: 100vh;
+    padding: 50px 20px;
+}
+
+
+/* ==============================
+   MAIN CONTAINER
+============================== */
+
+.container {
+    max-width: 750px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(115, 91, 145, 0.08);
+}
+
+
+/* ==============================
+   HEADER
+============================== */
+
+.header {
+    margin-bottom: 35px;
+}
+
+.header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #75618f;
+    margin-bottom: 10px;
+}
+
+
+/* ==============================
+   ADD TASK SECTION
+============================== */
+
+.add-section {
+    background: #f5f0fb;
+    padding: 25px;
+    border-radius: 18px;
+    margin-bottom: 35px;
+}
+
+#task-form {
+    display: flex;
+    gap: 12px;
+}
+
+#task-input {
+    flex: 1;
+    min-width: 0;
+    padding: 13px 16px;
+    border: 1px solid #e2d8ef;
+    border-radius: 12px;
+    outline: none;
+    font-size: 15px;
+    background: #ffffff;
+    color: #49445a;
+    transition: border 0.2s;
+}
+
+#task-input:focus {
+    border-color: #b99bd8;
+}
+
+#task-input::placeholder {
+    color: #aaa1b7;
+}
+
+
+/* ==============================
+   BUTTONS
+============================== */
+
+button {
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: 0.2s ease;
+}
+
+.add-button {
+    background: #a991ca;
+    color: #ffffff;
+    padding: 13px 22px;
+}
+
+.add-button:hover {
+    background: #9275b8;
+    transform: translateY(-2px);
+}
+
+.secondary-button {
+    background: #eee7f6;
+    color: #79658f;
+    padding: 10px 16px;
+    margin-top: 12px;
+}
+
+.secondary-button:hover {
+    background: #e2d6ef;
+}
+
+
+/* ==============================
+   MESSAGES
+============================== */
+
+#message {
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.success-message {
+    color: #78a88b;
+}
+
+.error-message {
+    color: #d77d91;
+}
+
+
+/* ==============================
+   TASKS SECTION
+============================== */
+
+.tasks-section {
+    margin-top: 20px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    font-size: 22px;
+    color: #75618f;
+}
+
+.section-header .secondary-button {
+    margin-top: 0;
+}
+
+
+/* ==============================
+   STATISTICS
+============================== */
+
+.stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+}
+
+.stats span {
+    background: #faf6fd;
+    padding: 10px 15px;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #8c7c9f;
+}
+
+.stats strong {
+    color: #75618f;
+    margin-left: 4px;
+}
+
+
+/* ==============================
+   TASK CARDS
+============================== */
+
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fffafd;
+    border: 1px solid #f0e7f3;
+    padding: 17px 20px;
+    border-radius: 15px;
+    transition: 0.2s ease;
+}
+
+.task-item:hover {
+    background: #faf5fd;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(115, 91, 145, 0.06);
+}
+
+.task-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.task-info input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    accent-color: #a991ca;
+}
+
+.task-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #554b65;
+    overflow-wrap: anywhere;
+}
+
+.task-status {
+    font-size: 12px;
+    color: #a79bb5;
+    margin-top: 5px;
+}
+
+
+/* ==============================
+   EMPTY MESSAGE
+============================== */
+
+.empty-message {
+    text-align: center;
+    color: #a99db7;
+    padding: 30px 15px;
+    font-size: 14px;
+}
+
+
+/* ==============================
+   MOBILE VERSION
+============================== */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 20px 12px;
+    }
+
+    .container {
+        padding: 25px 18px;
+        border-radius: 18px;
+    }
+
+    .header h1 {
+        font-size: 27px;
+    }
+
+    #task-form {
+        flex-direction: column;
+    }
+
+    .add-button {
+        width: 100%;
+    }
+
+    .section-header h2 {
+        font-size: 19px;
+    }
+
+    .stats {
+        gap: 8px;
+    }
+
+    .stats span {
+        font-size: 12px;
+        padding: 9px 11px;
+    }
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои задачи</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+        <main class="container">
+
+    <header class="header">
+        <h1>Мои задачи</h1>
+    </header>
+
+    <section class="add-section">
+        <form id="task-form">
+            <input
+                type="text"
+                id="task-input"
+                placeholder="Введите задачу"
+                required
+            >
+            <button type="submit" class="add-button">
+                Добавить
+            </button>
+        </form>
+
+        <button id="clear-button" class="secondary-button">
+            Очистить поле
+        </button>
+
+        <p id="message"></p>
+    </section>
+
+    <section class="tasks-section">
+
+        <div class="section-header">
+            <h2>Список задач</h2>
+
+            <button id="refresh-button" class="secondary-button">
+                Обновить
+            </button>
+        </div>
+
+        <div class="stats">
+            <span>Всего: <strong id="total-count">0</strong></span>
+            <span>Активных: <strong id="active-count">0</strong></span>
+            <span>Готово: <strong id="completed-count">0</strong></span>
+        </div>
+
+        <div id="task-list" class="task-list">
+            <p class="empty-message">Загрузка задач...</p>
+        </div>
+
+    </section>
+
+</main>
+
+<script src="script.js"></script>
+
+</body>
+</html>
