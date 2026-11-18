@@ -27,11 +27,13 @@ class TaskResponse(BaseModel):
 
     id: int
     title: str
+    description: str | None
     completed: bool
 
 
 class TaskCreate(BaseModel):
     title: str
+    description: str | None = None
 
 
 class TaskUpdate(BaseModel):
@@ -40,6 +42,7 @@ class TaskUpdate(BaseModel):
 
 class TaskReplace(BaseModel):
     title: str
+    description: str | None = None
     completed: bool
 
 
@@ -63,7 +66,11 @@ def get_tasks(db: Session = Depends(get_db)):
 @app.post("/tasks", response_model=TaskResponse, status_code=status.HTTP_201_CREATED)
 def create_task(payload: TaskCreate, db: Session = Depends(get_db)):
     """Создать новую задачу"""
-    task = TaskModel(title=payload.title, completed=False)
+    task = TaskModel(
+    title=payload.title,
+    description=payload.description,
+    completed=False
+)
 
     db.add(task)
     db.commit()
@@ -104,6 +111,7 @@ def replace_task(
 
     task.title = payload.title
     task.completed = payload.completed
+    task.description = payload.description 
 
     db.commit()
     db.refresh(task)

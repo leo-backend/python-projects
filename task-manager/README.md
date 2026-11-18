@@ -6,17 +6,19 @@ A full-stack task management application built with Python, FastAPI, SQLAlchemy,
 
 - Create new tasks
 - View all tasks
-- Edit task titles
+- Edit task titles and descriptions
 - Mark tasks as completed
 - Delete tasks
 - Track total, active, and completed tasks
 - Persistent data storage using SQLite
+- Database schema management using Alembic migrations
 
 ## Tech Stack
 
 - **Backend:** Python, FastAPI
 - **ORM:** SQLAlchemy
 - **Database:** SQLite
+- **Migrations:** Alembic
 - **Frontend:** HTML, CSS, JavaScript
 - **API:** REST API
 - **Server:** Uvicorn
@@ -29,8 +31,13 @@ task-manager/
 │   ├── index.html
 │   ├── style.css
 │   └── script.js
-├── .venv/
+├── migrations/
+│   ├── versions/
+│   ├── env.py
+│   ├── README
+│   └── script.py.mako
 ├── .gitignore
+├── alembic.ini
 ├── database.py
 ├── init_db.py
 ├── models.py
@@ -64,7 +71,7 @@ Activate it:
 ### 3. Install dependencies
 
 ```bash
-pip install fastapi uvicorn sqlalchemy
+pip install fastapi uvicorn sqlalchemy alembic
 ```
 
 ### 4. Initialize the database
@@ -74,6 +81,12 @@ python init_db.py
 ```
 
 This creates the SQLite database and the required tables.
+
+Register the current database schema with Alembic:
+
+```bash
+alembic stamp head
+```
 
 ### 5. Start the backend
 
@@ -112,6 +125,42 @@ The application uses SQLite for persistent data storage.
 
 SQLAlchemy ORM handles database operations, while `models.py` defines the database structure.
 
+The `Task` model includes the following fields:
+
+- `id` — unique task identifier
+- `title` — task title
+- `description` — optional task description
+- `completed` — task completion status
+
 Tasks are stored in `tasks.db` and remain available after the backend server restarts.
 
 The database file is excluded from Git using `.gitignore`.
+
+## Database Migrations
+
+Alembic is used to manage database schema changes.
+
+Migrations allow the database structure to evolve alongside SQLAlchemy models without manually recreating tables.
+
+Useful commands:
+
+```bash
+# Check the current database revision
+alembic current
+
+# View migration history
+alembic history
+
+# Generate a migration automatically
+alembic revision --autogenerate -m "Migration message"
+
+# Apply all pending migrations
+alembic upgrade head
+
+# Revert the latest migration
+alembic downgrade -1
+```
+
+After changing SQLAlchemy models, generate and review a migration before applying it.
+
+**Note:** The initial baseline migration records the existing database schema. The database tables are created by `init_db.py` during initial setup.
