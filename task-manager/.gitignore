@@ -11,3 +11,6 @@ venv/
 
 # IDE settings
 .vscode/
+
+# Database
+*.db 

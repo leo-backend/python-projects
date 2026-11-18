@@ -1,79 +1,125 @@
-from uuid import uuid4
-
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+from sqlalchemy.orm import Session
+
+from database import SessionLocal
+from models import Task as TaskModel
+from sqlalchemy import select
 
 
 app = FastAPI()
 
 
-app.add_middleware( 
-    CORSMiddleware, 
-    allow_origins=[ "http://localhost:5500"], 
-    allow_methods=["*"], 
-    allow_headers=["*"], 
-    allow_credentials=True, 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5500"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+    allow_credentials=True,
 )
 
 
-class Task(BaseModel):
-    """Модель задачи"""
-    id: str
+# Pydantic models
+
+class TaskResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
     title: str
-    completed: bool = False
+    completed: bool
 
 
 class TaskCreate(BaseModel):
     title: str
 
+
 class TaskUpdate(BaseModel):
     completed: bool
+
 
 class TaskReplace(BaseModel):
     title: str
     completed: bool
 
-tasks: list[Task] = []
+
+# Database dependency
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
-@app.get("/tasks", response_model=list[Task])
-def get_tasks():
+@app.get("/tasks", response_model=list[TaskResponse])
+def get_tasks(db: Session = Depends(get_db)):
     """Получить список задач"""
-    return tasks
+    statement = select(TaskModel)
+    return db.scalars(statement).all()
 
 
-@app.post("/tasks", response_model=Task, status_code=status.HTTP_201_CREATED)
-def create_task(payload: TaskCreate):
+@app.post("/tasks", response_model=TaskResponse, status_code=status.HTTP_201_CREATED)
+def create_task(payload: TaskCreate, db: Session = Depends(get_db)):
     """Создать новую задачу"""
-    task = Task(id=str(uuid4()), title=payload.title, completed=False)
-    tasks.append(task)
+    task = TaskModel(title=payload.title, completed=False)
+
+    db.add(task)
+    db.commit()
+    db.refresh(task)
+
     return task
 
 
-@app.patch("/tasks/{task_id}", response_model=Task)
-def update_task(task_id: str, payload: TaskUpdate):
-    for task in tasks:
-        if task.id == task_id:
-            task.completed = payload.completed
-            return task
-    raise HTTPException(status_code=404, detail="Task not found")
+@app.patch("/tasks/{task_id}", response_model=TaskResponse)
+def update_task(
+    task_id: int,
+    payload: TaskUpdate,
+    db: Session = Depends(get_db)
+):
+    task = db.get(TaskModel, task_id)
+
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    task.completed = payload.completed
+
+    db.commit()
+    db.refresh(task)
+
+    return task
 
 
-@app.put("/tasks/{task_id}", response_model=Task)
-def replace_task(task_id: str, payload: TaskReplace):
-    for index, task in enumerate(tasks):
-        if task.id == task_id:
-            update_task = Task(id=task.id, title=payload.title, completed=payload.completed)
-            tasks[index] = update_task
-            return update_task
-    raise HTTPException(status_code=404, detail="Task not found")
+@app.put("/tasks/{task_id}", response_model=TaskResponse)
+def replace_task(
+    task_id: int,
+    payload: TaskReplace,
+    db: Session = Depends(get_db)
+):
+    task = db.get(TaskModel, task_id)
+
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    task.title = payload.title
+    task.completed = payload.completed
+
+    db.commit()
+    db.refresh(task)
+
+    return task
 
 
-@app.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_task(task_id: str):
-    for index, task in enumerate(tasks):
-        if task.id == task_id:
-            tasks.pop(index)
-            return
-    raise HTTPException(status_code=404, detail="Task not found")
+@app.delete("/tasks/{task_id}")
+def delete_task(task_id: int, db: Session = Depends(get_db)):
+    """Удалить задачу"""
+    task = db.get(TaskModel, task_id)
+
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    db.delete(task)
+    db.commit()
+
+    return {"message": "Task deleted successfully"}
